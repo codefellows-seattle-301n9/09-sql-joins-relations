@@ -7,10 +7,10 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 //for Trevor
-//const conString = 'postgres://postgres:1234@localhost:3000/kilovolt';
+//const conString = 'postgres://postgres:1234@localhost:5432/kilovolt';
 
 //for Ariel
-const conString = 'postgres://postgres:ginger25@localhost:3000/kilovolt';
+const conString = 'postgres://postgres:ginger25@localhost:5432/kilovolt';
 
 const client = new pg.Client(conString);
 client.connect();
@@ -50,7 +50,7 @@ app.post('/articles', (request, response) => {
   },
   function (err) {
     if (err) console.error(err);
-    // REVIEW: This is our second query, to be executed when this first query is complete.
+    // REVIEWED: This is our second query, to be executed when this first query is complete.
     queryTwo();
   }
   )
@@ -62,7 +62,7 @@ app.post('/articles', (request, response) => {
       function(err, result) {
         if (err) console.error(err);
 
-        // REVIEW: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
+        // REVIEWED: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
         queryThree(result.rows[0].author_id);
       }
     )
@@ -82,13 +82,24 @@ app.post('/articles', (request, response) => {
 
 app.put('/articles/:id', function(request, response) {
   client.query(
-    ``,
-    []
+    `UPDATE authors
+    SET
+    author = $2,
+    "authorUrl" = $3,
+    WHERE author_id = $1`,
+    [request.body.author_id, request.body.author, request.body.authorUrl]
   )
     .then(() => {
       client.query(
-        ``,
-        []
+        `UPDATE articles
+    SET
+    title = $2,
+    category = $3,
+    "publishedOn" = $4,
+    body = $5,
+    author_id = $6
+    WHERE article_id = $1`,
+        [request.params.id, request.body.title, request.body.category, request.body.publishedOn, request.body.body, request.body.author_id]
       )
     })
     .then(() => {
