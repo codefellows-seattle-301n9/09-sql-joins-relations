@@ -18,12 +18,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('./public'));
 
-// REVIEW: These are routes for requesting HTML resources.
+// REVIEWED: These are routes for requesting HTML resources.
 app.get('/new', (request, response) => {
   response.sendFile('new.html', {root: './public'});
 });
 
-// REVIEW: These are routes for making API calls to enact CRUD operations on our database.
+// REVIEWED: These are routes for making API calls to enact CRUD operations on our database.
 app.get('/articles', (request, response) => {
   client.query(`
     SELECT * FROM articles
@@ -44,7 +44,7 @@ app.post('/articles', (request, response) => {
     [request.body.author, request.body.authorUrl],
     function(err) {
       if (err) console.error(err);
-      // REVIEW: This is our second query, to be executed when this first query is complete.
+      // REVIEWED: This is our second query, to be executed when this first query is complete.
       queryTwo();
     }
   )
@@ -57,7 +57,7 @@ app.post('/articles', (request, response) => {
       function(err, result) {
         if (err) console.error(err);
 
-        // REVIEW: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
+        // REVIEWED: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
         queryThree(result.rows[0].author_id);
       }
     )
@@ -138,7 +138,7 @@ app.delete('/articles', (request, response) => {
     });
 });
 
-// REVIEW: This calls the loadDB() function, defined below.
+// REVIEWED: This calls the loadDB() function, defined below.
 loadDB();
 
 app.listen(PORT, () => {
@@ -149,7 +149,7 @@ app.listen(PORT, () => {
 //////// ** DATABASE LOADERS ** ////////
 ////////////////////////////////////////
 
-// REVIEW: This helper function will load authors into the DB if the DB is empty.
+// REVIEWED: This helper function will load authors into the DB if the DB is empty.
 function loadAuthors() {
   fs.readFile('./public/data/hackerIpsum.json', 'utf8', (err, fd) => {
     JSON.parse(fd).forEach(ele => {
@@ -161,7 +161,7 @@ function loadAuthors() {
   })
 }
 
-// REVIEW: This helper function will load articles into the DB if the DB is empty.
+// REVIEWED: This helper function will load articles into the DB if the DB is empty.
 function loadArticles() {
   client.query('SELECT COUNT(*) FROM articles')
     .then(result => {
@@ -183,7 +183,7 @@ function loadArticles() {
     })
 }
 
-// REVIEW: Below are two queries, wrapped in the loadDB() function, which create separate tables in our DB, and create a relationship between the authors and articles tables.
+// REVIEWED: Below are two queries, wrapped in the loadDB() function, which create separate tables in our DB, and create a relationship between the authors and articles tables.
 // THEN they load their respective data from our JSON file.
 function loadDB() {
   client.query(`
