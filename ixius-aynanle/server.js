@@ -39,41 +39,52 @@ app.get('/articles', (request, response) => {
 });
 
 app.post('/articles', (request, response) => {
+  client.query(
+    `INSERT INTO
+    authors(author, "authorUrl")
+    VALUES ($1, $2)
+    ON CONFLICT DO NOTHING;`,
+    [request.body.author, 
+      request.body.authorUrl],
+    function(err) {
+      if (err) console.error(err);
+      // REVIEW: This is our second query, to be executed when this first query is complete.
+      queryTwo();
+    }
+  )
+
+  function queryTwo() {
     client.query(
+      `   SELECT * FROM authors
+      WHERE author = $1;`,
 
-    `
-    INSERT INTO IF NOT EXISTS 
-    authors(author, "authorURL")
-    VALUES ($1, $2);
-    `,
-    [
-      request.body.author, 
-      request.body.authorUrl
-    ]
-  
+      [request.body.author],
+      function(err, result) {
+        if (err) console.error(err);
+        response.send(result);
+        // REVIEW: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
+        queryThree(result.rows[0].author_id);
+      }
     )
-    .then((result) =>{
-      console.log('things!!!!!!!!!', result.rows[0].author_id);
-      
-        `INSERT INTO
-        articles(title, author, author_id, "authorUrl", category, "publishedOn", body)
-        VALUES ($1, $2, $3, $4, $5, $6, $7);
-        `,
-        [
-          request.body.title,
-          request.body.author,
-          result.rows[0].author_id,
-          result.rows[0].authorUrl,
-          request.body.category,
-          request.body.publishedOn,
-          request.body.body
-        ]
-
-    }).catch(err => {
-      response.send(err);
-    })
- 
-
+  }
+  function queryThree(author_id, result) {
+    client.query(
+      `INSERT INTO
+      articles(title, author, author_id, "authorUrl", category, "publishedOn", body)
+      VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+      [   request.body.title,
+        request.body.author,
+        author_id,
+        result.rows[0].authorUrl,
+        request.body.category,
+        request.body.publishedOn,
+        request.body.body],
+      function(err) {
+        if (err) console.error(err);
+        response.send('insert complete');
+      }
+    );
+  }
 });
 
 app.put('/articles/:id', function(request, response) {
@@ -198,4 +209,4 @@ function loadDB() {
     .catch(err => {
       console.error(err) 
     });
-}
+  } 
