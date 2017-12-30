@@ -25,8 +25,9 @@ This application was designed using:
 12/30/2017:
 - install NPM packages
 - build 'blogs' database with authors and articles
-- write SQL queries for CREATE
-- write SQL queries for UPDATE
+- write SQL query for table join
+- write SQL queries for CREATE records
+- write SQL queries for UPDATE records
 - run tests for successful CRUD operations
 
 ## Credits and Collaborations
