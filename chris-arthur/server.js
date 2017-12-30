@@ -25,7 +25,7 @@ app.get('/new', (request, response) => {
 
 // REVIEWED: These are routes for making API calls to enact CRUD operations on our database.
 app.get('/articles', (request, response) => {
-  client.query(`SELECT * FROM articles INNER JOIN authors ON articles.author_id = authors.author_id`)
+  client.query(`SELECT * FROM articles INNER JOIN authors ON articles.author_id = authors.author_id;`)
     .then(result => {
       response.send(result.rows);
     })
@@ -35,9 +35,9 @@ app.get('/articles', (request, response) => {
 });
 
 app.post('/articles', (request, response) => {
-  client.query(
-    ``,
-    [],
+  client.query(`
+    INSERT INTO authors(author, "authorUrl") VALUES($1, $2) ON CONFLICT DO NOTHING;`,
+    [request.body.author, request.body.authorUrl],
     function(err) {
       if (err) console.error(err);
       // REVIEW: This is our second query, to be executed when this first query is complete.
@@ -47,8 +47,8 @@ app.post('/articles', (request, response) => {
 
   function queryTwo() {
     client.query(
-      ``,
-      [],
+      `SELECT * FROM authors WHERE author = $1;`,
+      [request.body.author],
       function(err, result) {
         if (err) console.error(err);
 
@@ -128,7 +128,7 @@ function loadAuthors() {
   fs.readFile('./public/data/hackerIpsum.json', 'utf8', (err, fd) => {
     JSON.parse(fd).forEach(ele => {
       client.query(
-        'INSERT INTO authors(author, "authorUrl") VALUES($1, $2) ON CONFLICT DO NOTHING',
+        'INSERT INTO authors(author, "authorUrl") VALUES($1, $2) ON CONFLICT DO NOTHING;',
         [ele.author, ele.authorUrl]
       );
     });
