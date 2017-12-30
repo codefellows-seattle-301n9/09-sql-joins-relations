@@ -1,3 +1,4 @@
+
 # SQL JOINS RELATIONS
 
 **Authors**: Alicia Lycan and Rafael Malave
@@ -18,9 +19,16 @@ This application uses MVC architecture and also SMACSS for CSS architecture.
 Javascript, Jquery, PostgressSQL, NPM, Expressjs, HTML
 
 ## Change Log
-<!-- Use this are to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
 
-01-01-2001 4:59pm - Application now has a fully-functional express server, with GET and POST routes for the book resource.
+Merge: 717ea5e f51096e
+Author: Alicia Lycan <alicialycan@gmail.com>
+Date:   Sat Dec 30 13:33:41 2017 -0800
 
-## Credits and Collaborations
-<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
+    Merge pull request #1 from alicialycan/alicia-lycan
+    
+    add sql commands
+
+Author: Rafael Malave <rafomalave@gmail.com>
+Date:   Sat Dec 30 14:10:04 2017 -0800
+
+    Added sql query to update articles
