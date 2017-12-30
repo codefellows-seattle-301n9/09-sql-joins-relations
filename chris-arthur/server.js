@@ -30,7 +30,7 @@ app.get('/articles', (request, response) => {
       response.send(result.rows);
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
     });
 });
 
@@ -43,7 +43,7 @@ app.post('/articles', (request, response) => {
       // REVIEW: This is our second query, to be executed when this first query is complete.
       queryTwo();
     }
-  )
+  );
 
   function queryTwo() {
     client.query(
@@ -55,7 +55,7 @@ app.post('/articles', (request, response) => {
         // REVIEW: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
         queryThree(result.rows[0].author_id);
       }
-    )
+    );
   }
 
   function queryThree(author_id) {
@@ -79,14 +79,14 @@ app.put('/articles/:id', function(request, response) {
       client.query(
         ``,
         []
-      )
+      );
     })
     .then(() => {
       response.send('Update complete');
     })
     .catch(err => {
       console.error(err);
-    })
+    });
 });
 
 app.delete('/articles/:id', (request, response) => {
@@ -98,7 +98,7 @@ app.delete('/articles/:id', (request, response) => {
       response.send('Delete complete');
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
     });
 });
 
@@ -108,7 +108,7 @@ app.delete('/articles', (request, response) => {
       response.send('Delete complete');
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
     });
 });
 
@@ -130,9 +130,9 @@ function loadAuthors() {
       client.query(
         'INSERT INTO authors(author, "authorUrl") VALUES($1, $2) ON CONFLICT DO NOTHING',
         [ele.author, ele.authorUrl]
-      )
-    })
-  })
+      );
+    });
+  });
 }
 
 // REVIEW: This helper function will load articles into the DB if the DB is empty.
@@ -150,11 +150,11 @@ function loadArticles() {
             WHERE author=$5;
             `,
               [ele.title, ele.category, ele.publishedOn, ele.body, ele.author]
-            )
-          })
-        })
+            );
+          });
+        });
       }
-    })
+    });
 }
 
 // REVIEW: Below are two queries, wrapped in the loadDB() function, which create separate tables in our DB, and create a relationship between the authors and articles tables.
@@ -172,7 +172,7 @@ function loadDB() {
       loadAuthors(data);
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
     });
 
   client.query(`
@@ -190,6 +190,6 @@ function loadDB() {
       loadArticles(data);
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
     });
 }
