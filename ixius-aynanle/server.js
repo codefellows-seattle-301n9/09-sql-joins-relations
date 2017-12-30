@@ -55,10 +55,11 @@ app.post('/articles', (request, response) => {
 
   function queryTwo() {
     client.query(
-      `   SELECT * FROM authors
+      ` SELECT * FROM authors
       WHERE author = $1;`,
 
       [request.body.author],
+
       function(err, result) {
         if (err) console.error(err);
         response.send(result);
@@ -67,21 +68,20 @@ app.post('/articles', (request, response) => {
       }
     )
   }
-  function queryThree(author_id, result) {
+  function queryThree(author_id) {
     client.query(
       `INSERT INTO
-      articles(title, author, author_id, "authorUrl", category, "publishedOn", body)
-      VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+      articles(title, author_id, category, "publishedOn", body)
+      VALUES ($1, $2, $3, $4, $5);`,
       [   request.body.title,
-        request.body.author,
         author_id,
-        result.rows[0].authorUrl,
         request.body.category,
         request.body.publishedOn,
         request.body.body],
-      function(err) {
-        if (err) console.error(err);
-        response.send('insert complete');
+      
+        function(err) {
+          if (err) console.error(err);
+
       }
     );
   }
