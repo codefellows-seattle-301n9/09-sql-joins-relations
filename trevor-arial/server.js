@@ -7,10 +7,10 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 //for Trevor
-//const conString = 'postgres://postgres:1234@localhost:5432/kilovolt';
+const conString = 'postgres://trevorjdobson:1234@localhost:5432/kilovolt';
 
 //for Ariel
-const conString = 'postgres://postgres:ginger25@localhost:5432/kilovolt';
+//const conString = 'postgres://postgres:ginger25@localhost:5432/kilovolt';
 
 const client = new pg.Client(conString);
 client.connect();
@@ -42,23 +42,27 @@ app.get('/articles', (request, response) => {
 
 app.post('/articles', (request, response) => {
   const author = request.body
+  console.log('anything')
   client.query(
     `INSERT INTO authors 
       (author, "authorUrl")
-      VALUES ('${author.author}', '${author.authorUrl}') ON CONFLICT DO NOTHING`).then(result => {
-    response.send(result)
-  },
-  function (err) {
-    if (err) console.error(err);
-    // REVIEWED: This is our second query, to be executed when this first query is complete.
-    queryTwo();
-  }
+      VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+    [
+      request.body.author,
+      request.body.authorUrl
+    ],
+    function (err) {
+      if (err) console.error(err);
+      // REVIEWED: This is our second query, to be executed when this first query is complete.
+      queryTwo();
+    }
   )
 
   function queryTwo() {
+    console.log('second query')
     client.query(
-      `SELECT * FROM authors
-        WHERE author = '${author.author}'`,
+      `SELECT author_id FROM authors
+        WHERE author = '${request.body.author}'`,
       function(err, result) {
         if (err) console.error(err);
 
@@ -69,8 +73,9 @@ app.post('/articles', (request, response) => {
   }
 
   function queryThree(author_id) {
+    console.log(author_id)
     client.query(
-      `INSERT INTO articles(author_id, title, category, "publishedOn", body) VALUES($1, $2, $3, $4, $5)`,
+      `INSERT INTO articles(author_id, title, category, "publishedOn", body) VALUES($1, $2, $3, $4, $5);`,
       [author_id, author.title, author.category, author.publishedOn, author.body],
       function(err) {
         if (err) console.error(err);
@@ -84,21 +89,21 @@ app.put('/articles/:id', function(request, response) {
   client.query(
     `UPDATE authors
     SET
-    author = $2,
-    "authorUrl" = $3,
-    WHERE author_id = $1`,
+    author=$2,
+    "authorUrl"=$3
+    WHERE author_id=$1`,
     [request.body.author_id, request.body.author, request.body.authorUrl]
   )
     .then(() => {
       client.query(
         `UPDATE articles
     SET
-    title = $2,
-    category = $3,
-    "publishedOn" = $4,
-    body = $5,
-    author_id = $6
-    WHERE article_id = $1`,
+    title=$2,
+    category=$3,
+    "publishedOn"=$4,
+    body=$5,
+    author_id=$6
+    WHERE article_id=$1`,
         [request.params.id, request.body.title, request.body.category, request.body.publishedOn, request.body.body, request.body.author_id]
       )
     })
@@ -137,7 +142,7 @@ app.delete('/articles', (request, response) => {
 loadDB();
 
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}!`);
+  console.log(`Server started on port whatever!`);
 });
 
 
