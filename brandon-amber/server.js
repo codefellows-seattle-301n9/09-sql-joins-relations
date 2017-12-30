@@ -96,8 +96,6 @@ app.post('/articles', (request, response) => {
 });
 
 app.put('/articles/:article_id', function(request, response) {
-  console.log('put author_id: ' + request.body.author_id);
-  console.log('article id: ' + request.params.article_id);
   client.query(
     `UPDATE authors
     SET author=$1, "authorUrl"=$2
@@ -109,8 +107,6 @@ app.put('/articles/:article_id', function(request, response) {
     ]
   )
     .then(() => {
-      console.log('reached put first THEN');
-      console.log('article id: ' + request.params.article_id);
       client.query(
         `UPDATE articles
         SET author_id=$2, title=$3, category=$4, "publishedOn"=$5, body=$6
