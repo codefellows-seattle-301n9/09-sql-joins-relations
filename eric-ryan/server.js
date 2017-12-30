@@ -48,15 +48,16 @@ app.post('/articles', (request, response) => {
     function(err) {
       if (err) console.error(err);
     
-      // REVIEW: This is our second query, to be executed when this first query is complete.
-      // queryTwo();
+      // REVIEWED: This is our second query, to be executed when this first query is complete.
+      queryTwo();
     }
   )
 
   function queryTwo() {
     client.query(
-      ``,
-      [],
+      `SELECT author_id FROM authors
+      VALUES($1)`,
+      [request.body.author_id],
       function(err, result) {
         if (err) console.error(err);
 
@@ -68,8 +69,10 @@ app.post('/articles', (request, response) => {
 
   function queryThree(author_id) {
     client.query(
-      ``,
-      [],
+      `INCERT article FROM authors(author_id)
+      VALUES($1, $2, $3, $4, $5, $6)
+      `,
+      [request.body.],
       function(err) {
         if (err) console.error(err);
         response.send('insert complete');
