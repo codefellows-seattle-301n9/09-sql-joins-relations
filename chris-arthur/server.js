@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-const conString = '';
+const conString = 'postgres://localhost:5432/?'; // <-- create a new DB in postgres to connect to with this path
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', error => {
@@ -18,14 +18,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('./public'));
 
-// REVIEW: These are routes for requesting HTML resources.
+// REVIEWED: These are routes for requesting HTML resources.
 app.get('/new', (request, response) => {
   response.sendFile('new.html', {root: './public'});
 });
 
-// REVIEW: These are routes for making API calls to enact CRUD operations on our database.
+// REVIEWED: These are routes for making API calls to enact CRUD operations on our database.
 app.get('/articles', (request, response) => {
-  client.query(``)
+  client.query(`SELECT * FROM articles INNER JOIN authors ON articles.author_id = authors.author_id`)
     .then(result => {
       response.send(result.rows);
     })
@@ -36,7 +36,7 @@ app.get('/articles', (request, response) => {
 
 app.post('/articles', (request, response) => {
   client.query(
-    '',
+    ``,
     [],
     function(err) {
       if (err) console.error(err);
