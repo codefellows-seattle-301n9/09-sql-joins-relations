@@ -20,15 +20,14 @@ Javascript, Jquery, PostgressSQL, NPM, Expressjs, HTML
 
 ## Change Log
 
-Merge: 717ea5e f51096e
-Author: Alicia Lycan <alicialycan@gmail.com>
+Author: Alicia Lycan 
 Date:   Sat Dec 30 13:33:41 2017 -0800
 
     Merge pull request #1 from alicialycan/alicia-lycan
     
     add sql commands
 
-Author: Rafael Malave <rafomalave@gmail.com>
+Author: Rafael Malave
 Date:   Sat Dec 30 14:10:04 2017 -0800
 
     Added sql query to update articles
