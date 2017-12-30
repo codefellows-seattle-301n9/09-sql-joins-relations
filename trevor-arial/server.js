@@ -41,7 +41,7 @@ app.post('/articles', (request, response) => {
   client.query(
     `INSERT INTO authors 
       (author, "authorUrl")
-      VALUES ('${author.author}', '${author.authorUrl}')`).then(result => {
+      VALUES ('${author.author}', '${author.authorUrl}') ON CONFLICT DO NOTHING`).then(result => {
     response.send(result)
   },
   function (err) {
@@ -66,8 +66,9 @@ app.post('/articles', (request, response) => {
 
   function queryThree(author_id) {
     client.query(
-      ``,
-      [],
+      `INSERT INTO articles(author_id, title, category, "publishedOn", body) VALUES($1, $2, $3, $4, $5)
+       WHERE author_id = $1`,
+      [author_id, author.title, author.category, author.publishedOn, author.body],
       function(err) {
         if (err) console.error(err);
         response.send('insert complete');
