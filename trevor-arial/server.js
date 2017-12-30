@@ -6,8 +6,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
+//for Trevor
+//const conString = 'postgres://postgres:1234@localhost:3000/kilovolt';
 
-const conString = 'postgres://postgres:1234@localhost:3000/kilovolt';
+//for Ariel
+const conString = 'postgres://postgres:ginger25@localhost:3000/kilovolt';
+
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', error => {
