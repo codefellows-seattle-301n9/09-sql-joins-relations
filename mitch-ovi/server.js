@@ -29,7 +29,9 @@ app.get('/new', (request, response) => {
 // REVIEW: These are routes for making API calls to enact CRUD operations on our database.
 app.get('/articles', (request, response) => {
   console.log('Hello 1234');
-  client.query(`SELECT * FROM articles`)
+  client.query(`SELECT *
+  FROM authors
+  INNER JOIN articles ON authors.author_id = articles.author_id;`)
     .then(result => {
       response.send(result.rows);
     })
@@ -42,7 +44,7 @@ app.post('/articles', (request, response) => {
   client.query(
     `INSERT INTO 
     authors(author, "authorUrl")
-    VALUES ($1, $2);
+    VALUES ($1, $2)
     ON CONFLICT DO NOTHING;
     `,
     [
@@ -52,18 +54,17 @@ app.post('/articles', (request, response) => {
     function(err) {
       if (err) console.error(err);
       // REVIEW: This is our second query, to be executed when this first query is complete.
-      // queryTwo();
+     queryTwo();
     }
   )
 
   function queryTwo() {
     client.query(
-    `
-    SELECT author_id FROM authors
+    `SELECT author_id FROM authors
     WHERE author = $1
     LIMIT 1;
       `,
-      [],
+      [request.body.author],
       function(err, result) {
         if (err) console.error(err);
 
@@ -80,7 +81,7 @@ app.post('/articles', (request, response) => {
       articles(author_id, title, category, "publishedOn", body)
       VALUES ($1, $2, $3, $4, $5);
       `,
-      [],
+      [author_id,  request.body.title, request.body.category, request.body.publishedOn, request.body.body],
       function(err) {
         if (err) console.error(err);
         response.send('insert complete');
