@@ -66,8 +66,7 @@ app.post('/articles', (request, response) => {
 
   function queryThree(author_id) {
     client.query(
-      `INSERT INTO articles(author_id, title, category, "publishedOn", body) VALUES($1, $2, $3, $4, $5)
-       WHERE author_id = $1`,
+      `INSERT INTO articles(author_id, title, category, "publishedOn", body) VALUES($1, $2, $3, $4, $5)`,
       [author_id, author.title, author.category, author.publishedOn, author.body],
       function(err) {
         if (err) console.error(err);
