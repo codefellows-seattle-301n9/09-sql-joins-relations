@@ -142,7 +142,7 @@ app.delete('/articles', (request, response) => {
 loadDB();
 
 app.listen(PORT, () => {
-  console.log(`Server started on port whatever!`);
+  console.log(`Server started on port ${PORT}`);
 });
 
 
