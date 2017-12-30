@@ -1,3 +1,5 @@
+// import { log } from 'util';
+
 'use strict';
 
 const pg = require('pg');
@@ -7,6 +9,7 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+// below conString is setup for Umbuntu
 const conString = 'postgres://postgres:1234@localhost:5432/mvc_blog';
 const client = new pg.Client(conString);
 client.connect();
@@ -25,7 +28,8 @@ app.get('/new', (request, response) => {
 
 // REVIEW: These are routes for making API calls to enact CRUD operations on our database.
 app.get('/articles', (request, response) => {
-  client.query(``)
+  console.log('Hello 1234');
+  client.query(`SELECT * FROM articles`)
     .then(result => {
       response.send(result.rows);
     })
@@ -36,18 +40,29 @@ app.get('/articles', (request, response) => {
 
 app.post('/articles', (request, response) => {
   client.query(
-    '',
-    [],
+    `INSERT INTO 
+    authors(author, "authorUrl")
+    VALUES ($1, $2);
+    ON CONFLICT DO NOTHING;
+    `,
+    [
+      request.body.author,
+      request.body.authorURL
+    ],
     function(err) {
       if (err) console.error(err);
       // REVIEW: This is our second query, to be executed when this first query is complete.
-      queryTwo();
+      // queryTwo();
     }
   )
 
   function queryTwo() {
     client.query(
-      ``,
+    `
+    SELECT author_id FROM authors
+    WHERE author = $1
+    LIMIT 1;
+      `,
       [],
       function(err, result) {
         if (err) console.error(err);
@@ -60,7 +75,11 @@ app.post('/articles', (request, response) => {
 
   function queryThree(author_id) {
     client.query(
-      ``,
+      `
+      INSERT INTO
+      articles(author_id, title, category, "publishedOn", body)
+      VALUES ($1, $2, $3, $4, $5);
+      `,
       [],
       function(err) {
         if (err) console.error(err);
