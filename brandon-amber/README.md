@@ -1,22 +1,16 @@
-# Project Name
+# CodeFellows 301 Lab 09 Database Relationships & SQL Joins
 
-**Author**: Brandon, Amber
-**Version**: 1.0.0 (increment the patch/fix version number up if you make more commits past your first submission)
+**Author**: Brandon Buchholz & Amber Kim
+**Version**: 1.0.0
 
 ## Overview
-<!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for a Code Fellows 301 class. (i.e. What's your problem domain?) -->
+An exercise in SQL Joins and node.js database interaction.
 
 ## Getting Started
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+To run this exercise, create your fork, clone your fork, make a copy of the starter code and try to solve the issues! Be sure to install all the required npm scripts.
 
 ## Architecture
-<!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
+This project includes these technologies: JavaScript, JQuery, Node.js, Express, Body-Parser, File Server, PostgreSQL, Handlebars, Highlight.js, AJAX, Markedjs.
 
 ## Change Log
-<!-- Use this are to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
-
-01-01-2001 4:59pm - Application now has a fully-functional express server, with GET and POST routes for the book resource.
-
-## Credits and Collaborations
-<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
--->
+Sat Dec 30 11:05:46 2017 -0800 - set up our constirngwith correct path, completed our app.get query, app.post query, and queries 2 and 3 completed. Switching drivers.
