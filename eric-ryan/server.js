@@ -4,10 +4,11 @@ const pg = require('pg');
 const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
+
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-const conString = '';
+const conString = 'postgres://localhost:5432/mvc_blog';
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', error => {
@@ -28,7 +29,7 @@ app.get('/articles', (request, response) => {
   client.query(`
     SELECT * FROM articles
     INNER JOIN authors
-    ON article.author_id = author.id
+    ON articles.author_id=authors.author_id
   `)
     .then(result => {
       response.send(result.rows);
@@ -40,23 +41,28 @@ app.get('/articles', (request, response) => {
 
 app.post('/articles', (request, response) => {
   client.query(
-    '',
-    [],
+    `INSERT INTO authors(author, "authorUrl") 
+      VALUES($1, $2)
+      ON CONFLICT DO NOTHING`,
+    [request.body.author, 
+      request.body.authorUrl],
+
     function(err) {
-      if (err) console.error(err);
-      // REVIEW: This is our second query, to be executed when this first query is complete.
+      if (err) console.error('this is the first query error ', err);
+      // REVIEWED: This is our second query, to be executed when this first query is complete.
       queryTwo();
     }
   )
 
   function queryTwo() {
     client.query(
-      ``,
-      [],
+      `SELECT author_id FROM authors
+      WHERE author=$1`,
+      [request.body.author],
       function(err, result) {
-        if (err) console.error(err);
+        if (err) console.error('this is the second query ', err);
 
-        // REVIEW: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
+        // REVIEWED: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
         queryThree(result.rows[0].author_id);
       }
     )
@@ -64,25 +70,45 @@ app.post('/articles', (request, response) => {
 
   function queryThree(author_id) {
     client.query(
-      ``,
-      [],
+      `INSERT INTO articles(author_id, title, category, "publishedOn", body)
+      VALUES($1, $2, $3, $4, $5);
+      `,
+      [author_id, 
+        request.body.title, 
+        request.body.category, 
+        request.body.publishedOn, 
+        request.body.body],
+
       function(err) {
-        if (err) console.error(err);
+        if (err) console.error('this is the third query error ', err);
         response.send('insert complete');
       }
     );
   }
 });
 
-app.put('/articles/:id', function(request, response) {
+app.put('/articles/:article_id', function(request, response) {
   client.query(
-    ``,
-    []
+    `UPDATE authors
+      SET author=$1, "authorUrl"=$2
+      WHERE author_id=$3;
+    `,
+    [request.body.author, 
+      request.body.authorUrl,
+      request.body.author_id]
   )
     .then(() => {
       client.query(
-        ``,
-        []
+        `UPDATE articles
+        SET author_id=$2, title=$3, category=$4, "publishedOn"=$5, body=$6
+        WHERE article_id=$1;
+        `,
+        [request.params.article_id,
+          request.body.author_id, 
+          request.body.title, 
+          request.body.category, 
+          request.body.publishedOn, 
+          request.body.body]
       )
     })
     .then(() => {
@@ -116,7 +142,7 @@ app.delete('/articles', (request, response) => {
     });
 });
 
-// REVIEW: This calls the loadDB() function, defined below.
+// REVIEWED: This calls the loadDB() function, defined below.
 loadDB();
 
 app.listen(PORT, () => {
@@ -127,7 +153,7 @@ app.listen(PORT, () => {
 //////// ** DATABASE LOADERS ** ////////
 ////////////////////////////////////////
 
-// REVIEW: This helper function will load authors into the DB if the DB is empty.
+// REVIEWED: This helper function will load authors into the DB if the DB is empty.
 function loadAuthors() {
   fs.readFile('./public/data/hackerIpsum.json', 'utf8', (err, fd) => {
     JSON.parse(fd).forEach(ele => {
@@ -139,7 +165,7 @@ function loadAuthors() {
   })
 }
 
-// REVIEW: This helper function will load articles into the DB if the DB is empty.
+// REVIEWED: This helper function will load articles into the DB if the DB is empty.
 function loadArticles() {
   client.query('SELECT COUNT(*) FROM articles')
     .then(result => {
@@ -161,7 +187,7 @@ function loadArticles() {
     })
 }
 
-// REVIEW: Below are two queries, wrapped in the loadDB() function, which create separate tables in our DB, and create a relationship between the authors and articles tables.
+// REVIEWED: Below are two queries, wrapped in the loadDB() function, which create separate tables in our DB, and create a relationship between the authors and articles tables.
 // THEN they load their respective data from our JSON file.
 function loadDB() {
   client.query(`
