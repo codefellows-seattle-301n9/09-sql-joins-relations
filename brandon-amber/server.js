@@ -55,7 +55,6 @@ app.post('/articles', (request, response) => {
   )
   
   function queryTwo() {
-    console.log('got to query 2: ' + response);
     client.query(
       `SELECT author_id
       FROM authors
@@ -66,15 +65,12 @@ app.post('/articles', (request, response) => {
         if (err) console.error(err);
  
         // REVIEWED: This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query.
-        console.log('query 2 request.body.author: ' + request.body.author);
-        console.log('result row from query two: ' + result.rows[0].author_id);
         queryThree(result.rows[0].author_id);
       }
     )
   }
 
   function queryThree(author_id) {
-    console.log('author_id in query 3: ' + author_id);
     client.query(
       `INSERT INTO
      articles(author_id, title, category, "publishedOn", body)
